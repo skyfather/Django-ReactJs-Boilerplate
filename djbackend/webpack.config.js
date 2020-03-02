@@ -17,7 +17,7 @@ module.exports = {
   ],
 
   module: {
-    loaders: [
+    rules: [
       { 
         test: /\.jsx?$/, 
         exclude: /node_modules/, 
@@ -27,7 +27,7 @@ module.exports = {
   },
 
   resolve: {
-    modulesDirectories: ['node_modules', 'bower_components'],
-    extensions: ['', '.js', '.jsx']
+    modules: ['node_modules', 'bower_components'],
+    extensions: ['.js', '.jsx']
   },
 }
