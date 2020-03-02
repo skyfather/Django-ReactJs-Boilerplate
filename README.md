@@ -29,3 +29,45 @@ Let's create an assets directory to hold our frontend logic that will be bundled
 #### Create Webpack config
 Let's create a webpack.config.js file that will enable us to load .jsx files using babel and use webpack-bundle tracker
 plugin to extract information to webpack-stats.json file
+
+### Intergrating with Django
+`pip install django-webpack-loader`. This package will enable Django to load the latest bundle for our site.
+
+We'll need to add/modify the following in our settings.py file.
+
+```
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'assets'), # We do this so that django's collectstatic copies or our bundles to the STATIC_ROOT or syncs them to whatever storage we use.
+)
+```
+```
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
+```
+```
+INSTALLED_APPS = (
+ ...
+ 'webpack_loader',
+)
+```
+```
+TEMPLATES = [
+    {   ...
+        'DIRS': [os.path.join(BASE_DIR,'djbackend/templates')],
+        ...
+    },
+]
+```
+Create a templates directory and add the following templates to it.
+-base.html
+-view1.html
+
+In the projects url file, modify it to look like this:
+```
+
+```
+
