@@ -6,6 +6,7 @@ function App() {
   return (
     <div className="App">
       <h1>hello from React</h1>
+      <Home />
     </div>
   );
 }
