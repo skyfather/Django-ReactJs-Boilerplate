@@ -62,12 +62,111 @@ TEMPLATES = [
     },
 ]
 ```
-Create a templates directory and add the following templates to it.
--base.html
--view1.html
+Create a templates directory and add the following templates to it. I called it base.html in this case.
+```
+{% load render_bundle from webpack_loader %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Django-React</title>
+  </head>
+
+  <body>
+    <div id="react-app"></div>
+    {% render_bundle 'main' %}
+  </body>
+</html>
+```
 
 In the projects url file, modify it to look like this:
 ```
+from django.contrib import admin
+from django.urls import path
+from django.views import generic
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', generic.TemplateView.as_view(template_name='base.html')),
+]
 
 ```
+### Webpack Configuration
+Create a webpack.config.js file and add the followwing contents to it as appropriate.
+```
+var path = require("path")
+var webpack = require('webpack')
+var BundleTracker = require('webpack-bundle-tracker')
 
+module.exports = {
+  context: __dirname,
+
+  entry: [
+      'webpack-dev-server/client?http://localhost:3000',
+      'webpack/hot/only-dev-server',
+      './assets/reactjs/index', // entry point of our app. assets/js/index.js should require other js modules and dependencies it needs
+  ],
+
+  output: {
+      path: path.resolve('./assets/bundles/'),
+      filename: "[name]-[hash].js",
+      publicPath: 'http://localhost:3000/assets/bundles/', // Tell django to use this URL to load packages and not use STATIC_URL + bundle_name
+  },
+
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(), // don't reload if there is an error
+    new BundleTracker({filename: './webpack-stats.json'}),
+  ],
+
+  module: {
+    rules: [
+      { 
+        test: /\.jsx?$/, 
+        exclude: /node_modules/, 
+        loaders: ["babel-loader"] // to transform JSX into JS
+      }, 
+    ],
+  },
+
+  devServer: {
+    contentBase: './assets/reactjs',
+    hot: true
+  },
+
+  resolve: {
+    modules: ['node_modules', 'bower_components'],
+    extensions: ['.js', '.jsx']
+  },
+}
+```
+
+Create a server.js file and the following content's to it
+```
+var webpack = require('webpack')
+var WebpackDevServer = require('webpack-dev-server')
+var config = require('./webpack.config')
+
+new WebpackDevServer(webpack(config), {
+  publicPath: config.output.publicPath,
+  hot: true,
+  inline: true,
+  historyApiFallback: true
+}).listen(3000, '0.0.0.0', function (err, result) {
+  if (err) {
+    console.log(err)
+  }
+
+  console.log('Listening at 0.0.0.0:3000')
+})
+```
+
+Now that we are done, you can run `node server.js` and open another terminal and run `python manage.py runserver`.
+Or optionally you can modify the package.json file like this
+```
+"scripts": {
+    "build": "webpack --config webpack.config.js --progress --colors --mode=development",
+    "watch": "node server.js"
+  },
+```
+And run npm run watch.
