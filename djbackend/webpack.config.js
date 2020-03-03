@@ -19,7 +19,7 @@ module.exports = {
 
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin(), // don't reload if there is an error
+    new webpack.NoEmitOnErrorsPlugin(), // don't reload if there is an error
     new BundleTracker({filename: './webpack-stats.json'}),
   ],
 
@@ -28,9 +28,14 @@ module.exports = {
       { 
         test: /\.jsx?$/, 
         exclude: /node_modules/, 
-        loaders: ['react-hot','babel-loader'] // to transform JSX into JS
+        loaders: ["babel-loader"] // to transform JSX into JS
       }, 
     ],
+  },
+
+  devServer: {
+    contentBase: './assets/reactjs',
+    hot: true
   },
 
   resolve: {
