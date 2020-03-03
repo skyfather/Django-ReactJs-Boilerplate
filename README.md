@@ -1,5 +1,11 @@
 # Django-ReactJs-Boilerplate
 A boilerplate for using django and reactjs with webpack
+
+This project heavily borrows from the following resources:
+- [Django Webpack Loader](https://github.com/owais/django-webpack-loader)
+- Step by step guide to [Using webpack tranparently with Django](http://owaislone.org/blog/webpack-plus-reactjs-and-django/)
+- [Setting up react webpack and Babel](https://www.valentinog.com/blog/babel/)
+
 ## Creating a Django project
 Ensure you have activated the virual environment where you have installed Django and other requirements.
 Run `django-admin startapp djbackend` in the terminal to create the django project. I called mine djbackend.
